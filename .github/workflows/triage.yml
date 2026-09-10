@@ -1,0 +1,40 @@
+name: weekly-triage
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: true
+
+      - name: Test
+        run: go test ./... -count=1
+
+      - name: Run triage bot
+        run: go run . -mode all
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOS: ${{ vars.TRIAGE_REPOS }}
+
+      - name: Commit reports
+        run: |
+          git add triage-*.md || true
+          if ! git diff --cached --quiet; then
+            git -c user.name="issue-triage-robot[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                commit -m "triage: weekly report"
+            git push
+          fi
