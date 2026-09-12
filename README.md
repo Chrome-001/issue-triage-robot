@@ -73,8 +73,10 @@ Modes: `all` (default), `label`, `stale`, `report`. Thresholds:
 
 **GitHub Actions**: the included `weekly-triage` workflow runs Mondays at 04:00
 UTC and commits the reports. Set the `TRIAGE_REPOS` repository **variable**
-(`owner/repo,owner/repo2`); the built-in `GITHUB_TOKEN` has the permission it
-needs.
+(`owner/repo,owner/repo2`) and a `TRIAGE_TOKEN` repository **secret**: a classic
+PAT with the `repo` scope (or a fine-grained token with `issues: read/write`)
+covering every repo in `TRIAGE_REPOS`. The built-in `GITHUB_TOKEN` only reaches
+this one repo, so it cannot triage the others.
 
 ## Tests
 

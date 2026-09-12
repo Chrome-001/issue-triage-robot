@@ -26,12 +26,12 @@ jobs:
       - name: Run triage bot
         run: go run . -mode all
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.TRIAGE_TOKEN }}
           GITHUB_REPOS: ${{ vars.TRIAGE_REPOS }}
 
       - name: Commit reports
         run: |
-          git add triage-*.md || true
+          git add triage-*.md 2>/dev/null || true
           if ! git diff --cached --quiet; then
             git -c user.name="issue-triage-robot[bot]" \
                 -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
